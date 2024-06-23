@@ -1,18 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Interface;
+using Domain.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApplicationMVC.Data;
-using WebApplicationMVC.Models;
-using WebApplicationMVC.Models.Entity;
+using WebApplicationMVC.Mapper;
+using WebApplicationMVC.Models.StudentVM;
 
 namespace WebApplicationMVC.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly ApplicationsDBcontext dbContext;
+        private readonly IWebApplicationInterface _iWebApplicationInterface;
+        private readonly IStudentMapper _iStudentMapper;
 
-        public StudentsController(ApplicationsDBcontext dbContext)
+        public StudentsController(IWebApplicationInterface iWebApplicationInterface,IStudentMapper iStudentMapper )
         {
-            this.dbContext = dbContext;
+            _iWebApplicationInterface = iWebApplicationInterface;
+            _iStudentMapper = iStudentMapper;
         }
         [HttpGet]
         public IActionResult Index()
@@ -27,55 +30,62 @@ namespace WebApplicationMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(AddStudentViewModel viewModel)
+        public IActionResult Add(AddStudentViewModel viewModel)
         {
-
-            var student = new Student
-            {
-                Name = viewModel.Name,
-                Email = viewModel.Email,
-                Phone = viewModel.Phone,
-                Subscribed = viewModel.Subscribed
-            };
-
-            await dbContext.Students.AddAsync(student);
-            await dbContext.SaveChangesAsync();
-
+            var student = _iStudentMapper.Add(viewModel);
+            _iWebApplicationInterface.Add(student);
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> List()
-        {
-            var students = await dbContext.Students.ToListAsync();
+        //[HttpGet]
+        //public async Task<IActionRe   sult> List()
+        //{
+        //    var students = await dbContext.Students.ToListAsync();
 
-            return View(students);
-        }
+        //    return View(students);
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            var student = await dbContext.Students.FindAsync(id);
+        //[HttpGet]
+        //public async Task<IActionResult> Edit(Guid id)
+        //{
+        //    var student = await dbContext.Students.FindAsync(id);
 
-            return View(student);
-        }
+        //    return View(student);
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(Student viewModel)
-        {
-            var student = await dbContext.Students.FindAsync(viewModel.Id);
+        //[HttpPost]
+        //public async Task<IActionResult> Edit(Student viewModel)
+        //{
+        //    var student = await dbContext.Students.FindAsync(viewModel.Id);
 
-            if (student is not null)
-            {
-                student.Name = viewModel.Name;
-                student.Email = viewModel.Email;
-                student.Phone = viewModel.Phone;
-                student.Subscribed = viewModel.Subscribed;
+        //    if (student is not null)
+        //    {
+        //        student.Name = viewModel.Name;
+        //        student.Email = viewModel.Email;
+        //        student.Phone = viewModel.Phone;
+        //        student.Subscribed = viewModel.Subscribed;
 
-                await dbContext.SaveChangesAsync();
+        //        await dbContext.SaveChangesAsync();
 
-            }
-            return RedirectToAction("List","Students");
-        }
+        //    }
+        //    return RedirectToAction("List", "Students");
+        //}
+
+        //[HttpPost]
+
+        //public async Task<IActionResult> Delete(Student viewModel)
+        //{
+        //    var student = await dbContext.Students
+        //        .AsNoTracking()
+        //        .FirstOrDefaultAsync(x => x.Id == viewModel.Id);
+
+        //    if (student is not null)
+        //    {
+
+        //        dbContext.Students.Remove(viewModel);
+        //        await dbContext.SaveChangesAsync();
+        //    }
+        //    return RedirectToAction("List", "Students");
+        //}
     }
 }

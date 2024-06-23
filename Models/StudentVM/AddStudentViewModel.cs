@@ -1,4 +1,4 @@
-﻿namespace WebApplicationMVC.Models
+﻿namespace WebApplicationMVC.Models.StudentVM
 {
     public class AddStudentViewModel
     {

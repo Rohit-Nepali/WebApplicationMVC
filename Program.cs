@@ -1,5 +1,8 @@
+using Application.Interface;
+using Infrastructure.Data;
+using Infrastructure.Implementaion.Repository;
 using Microsoft.EntityFrameworkCore;
-using WebApplicationMVC.Data;
+using WebApplicationMVC.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 //Injecting the db context 
-builder.Services.AddDbContext<ApplicationsDBcontext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("StudentPortal")));
+builder.Services.AddDbContext<ApplicationsDBcontext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("StudentPortal")));
+
+builder.Services.AddScoped<IWebApplicationInterface, WebApplicationImplementation>();
+builder.Services.AddScoped<IStudentMapper, StudentMapper>();
 
 var app = builder.Build();
 
@@ -28,6 +35,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Students}/{action=Add}/{id?}");
 
 app.Run();

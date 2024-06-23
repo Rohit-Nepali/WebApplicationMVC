@@ -1,15 +1,11 @@
-﻿namespace WebApplicationMVC.Models.Entity
+﻿namespace WebApplicationMVC.Models.StudentVM
 {
-    public class Student
+    public class UpdateStudentVM
     {
-        public Guid Id { get; set; } //Entity framework sets its id automatically
-
+        public Guid Id { get; set; }
         public string Name { get; set; }
-
         public string Email { get; set; }
-
         public string Phone { get; set; }
-
         public bool Subscribed { get; set; }
     }
 }
